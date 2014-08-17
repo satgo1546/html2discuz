@@ -8,14 +8,40 @@ require 'rexml/streamlistener'
 
 module HTML2Discuz
 	class Processor
+		include REXML::StreamListener
+		
 		IGNORED_TAGS = [
 			:html,
 			:head,
 			:body,
 			:meta
 		]
-		include REXML::StreamListener
+		TAG_LIST = {
+			:b => :b,
+			:strong => :b,
+			:i => :i,
+			:em => :i,
+			:u => :u,
+			:h1 => "size=28px",
+			:h2 => "size=21px",
+			:h3 => "size=16.38px",
+			:h4 => "size=14px",
+			:h5 => "size=11.62px",
+			:h6 => "size=9.38px",
+			:table => :table,
+			:tr => :tr,
+			:td => :td,
+			:ol => "list=1",
+			:li => "*",
+			:ul => :list,
+			:a => :url,
+			:del => :s,
+			:ins => :u,
+			:code => "font=Courier New",
+		}
+		
 		attr_reader :result
+		
 		def initialize
 			clear_result
 		end
@@ -23,12 +49,14 @@ module HTML2Discuz
 			@result = ""
 		end
 		def tag_start(name, attributes)
-			return if IGNORED_TAGS.include?(name.to_sym)
-			@result << "[#{name}]"
+			name_sym = name.to_sym
+			return if IGNORED_TAGS.include?(name_sym)
+			@result << "[#{TAG_LIST[name_sym]}]"
 		end
 		def tag_end(name)
-			return if IGNORED_TAGS.include?(name.to_sym)
-			@result << "[/#{name}]"
+			name_sym = name.to_sym
+			return if IGNORED_TAGS.include?(name_sym)
+			@result << "[/#{TAG_LIST[name_sym].to_s.split(/=/)[0]}]"
 		end
 		def text(text)
 			@result << text
