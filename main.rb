@@ -1,14 +1,14 @@
 # encoding: utf-8
-# CmdMarkdown的HTML输出 → Discuz!代码转换器
+# HTML → Discuz!代码转换器
 # Written by satgo1546
-# 适配于CmdMarkdown导出的HTML文件。
+# 适配于符合XML标准的HTML文件。会忽略DOCTYPE。
 
-module CmdMarkdownHTML2DiscuzCode # 这确实不是一个好模块名
+module HTML2Discuz
 	GENERATOR_SIGNATURE = <<ENDBB.chomp
 [align=right][font=Microsoft YaHei][size=10pt][color=Silver]此帖子的代码由[b]CmdMarkdown的HTML输出 → Discuz!代码转换器[/b]生成。[/color][/size][/font][/align]
 ENDBB
-	def self.convert(filename)
-		quiet = ARGV.include?("--quiet")
+	def self.convert(from, to, options)
+		quiet = options.include?("--quiet")
 		c = File.read(filename,	:encoding => "utf-8")
 		# ============================================================================
 		c.gsub!(/<(title)>(.*?)<\/\1>/) { puts "Title = #{$2}" unless quiet; "" }
@@ -84,5 +84,10 @@ ENDBB
 end
 
 if __FILE__ == $0
-	CmdMarkdownHTML2DiscuzCode.convert("input.html")
+	options = []
+	filenames = []
+	while option = ARGV.shift
+		(option[/^--?/] ? options : filenames) << option
+	end
+	filenames.each { |fn| HTML2Discuz.convert(fn, "#{fn.sub(/\.html$/, "")}.discuz.txt", options) }
 end
