@@ -1,4 +1,7 @@
-html2discuz
-===========
+HTML→Discuz!代码转换器
+======================
 
-Let Discuz! post easier to write!
+使用方法
+--------
+
+    $ ruby main.rb
