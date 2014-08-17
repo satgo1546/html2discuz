@@ -37,6 +37,7 @@ module HTML2Discuz
 			:a => :url,
 			:del => :s,
 			:ins => :u,
+			:pre => "font=Courier New",
 			:code => "font=Courier New",
 		}
 		
